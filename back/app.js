@@ -1,13 +1,19 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
-mongoose
-  .connect(
-    "mongodb+srv://bipce:<password>@cluster0.lg26b.mongodb.net/test?retryWrites=true&w=majority",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
-  .then(() => console.log("Connexion à MongoDB réussie !"))
-  .catch(() => console.log("Connexion à MongoDB échouée !"));
+const User = require("./models/user");
+
+(async () => {
+  try {
+    await mongoose.connect(
+      "mongodb+srv://bipce:<password>@cluster0.lg26b.mongodb.net/test?retryWrites=true&w=majority",
+      { useNewUrlParser: true, useUnifiedTopology: true }
+    );
+    console.log("Connexion à MongoDB réussie !");
+  } catch {
+    console.log("Connexion à MongoDB échouée !");
+  }
+})();
 
 const app = express();
 
@@ -27,14 +33,27 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  console.log("Message console");
-  next();
-});
+// app.post("/api/auth/signup", (req, res, next) => {
+//   console.log(req.body);
+//   const user = new User({
+//     ...req.body,
+//   });
+//   user
+//     .save()
+//     .then(() => res.status(201).json({ message: "Utilisateur enregistré !" }))
+//     .catch((error) => res.status(400).json({ error }));
+// });
 
-app.use((req, res, next) => {
-  res.json({ message: "Test" });
-  next();
+app.post("/api/auth/signup", async (req, res, next) => {
+  const user = new User({
+    ...req.body,
+  });
+  try {
+    await user.save();
+    res.status(201).json({ message: "Utilisateur enregistré !" });
+  } catch (error) {
+    res.status(400).json({ error });
+  }
 });
 
 module.exports = app;

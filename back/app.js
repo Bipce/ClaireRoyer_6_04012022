@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 
-const User = require("./models/user");
+const userRoutes = require("./routes/user");
 
 (async () => {
   try {
@@ -33,27 +33,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.post("/api/auth/signup", (req, res, next) => {
-//   console.log(req.body);
-//   const user = new User({
-//     ...req.body,
-//   });
-//   user
-//     .save()
-//     .then(() => res.status(201).json({ message: "Utilisateur enregistré !" }))
-//     .catch((error) => res.status(400).json({ error }));
-// });
-
-app.post("/api/auth/signup", async (req, res, next) => {
-  const user = new User({
-    ...req.body,
-  });
-  try {
-    await user.save();
-    res.status(201).json({ message: "Utilisateur enregistré !" });
-  } catch (error) {
-    res.status(400).json({ error });
-  }
-});
+app.use("/api/auth", userRoutes);
 
 module.exports = app;

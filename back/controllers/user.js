@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 
@@ -28,7 +29,13 @@ exports.login = async (req, res, next) => {
     const valid = await bcrypt.compare(req.body.password, user.password);
     if (!valid)
       return res.status(401).json({ error: "Mot de passe incorrect !" });
-    res.status(200).json({ userId: user._id, token: "TOKEN" });
+    res.status(200).json({
+      userId: user._id,
+      // Sign use a secret key for to encode a token who can contain a personal payload and have a limited value.
+      token: jwt.sign({ userId: user._id }, "RANDOM_TOKEN_SECRET", {
+        expiresIn: "24h",
+      }),
+    });
   } catch (error) {
     res.status(500).json({ error });
   }

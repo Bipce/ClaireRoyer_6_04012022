@@ -10,12 +10,9 @@ const MINE_TYPES = {
 // Configure the path and filename for incoming files.
 const storage = multer.diskStorage({
   //Register the files in folder "images"
-  destination: (req, file, callback) => {
-    callback(null, "images");
-  },
-  // Use original name, replace the spaces with underscores and add a timestamp (Date.now) as file name.
+  destination: (req, file, callback) => callback(null, "images"),
+  // Add a timestamp (Date.now) as file name.
   filename: (req, file, callback) => {
-    const name = file.originalname.split(" ").join("_");
     // Use MINE to resolve the appropriate file extension.
     const extension = MINE_TYPES[file.mimetype];
     callback(null, Date.now() + "." + extension);

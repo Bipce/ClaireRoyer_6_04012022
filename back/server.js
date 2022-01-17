@@ -1,6 +1,13 @@
 const http = require("http");
 const app = require("./app");
 
+require("dotenv").config();
+
+if (!process.env.JWT_SECRET) {
+  console.log("JWT_SECRET is not defined");
+  process.exit(1);
+}
+
 const normalizePort = val => {
   const port = parseInt(val, 10); // Return a valid port (number or string).
 

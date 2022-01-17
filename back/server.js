@@ -1,7 +1,7 @@
+require("dotenv").config();
+
 const http = require("http");
 const app = require("./app");
-
-require("dotenv").config();
 
 if (!process.env.JWT_SECRET) {
   console.log("JWT_SECRET is not defined");

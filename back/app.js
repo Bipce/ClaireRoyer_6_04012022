@@ -7,10 +7,7 @@ const sauceRoutes = require("./routes/sauce");
 
 (async () => {
   try {
-    await mongoose.connect(
-      "mongodb+srv://bipce:<password>@cluster0.lg26b.mongodb.net/test?retryWrites=true&w=majority",
-      { useNewUrlParser: true, useUnifiedTopology: true },
-    );
+    await mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true });
     console.log("Connexion à MongoDB réussie !");
   } catch {
     console.log("Connexion à MongoDB échouée !");

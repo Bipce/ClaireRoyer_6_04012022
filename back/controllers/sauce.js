@@ -1,7 +1,7 @@
 const Sauce = require("../models/sauce");
 const fs = require("fs");
 
-exports.createSauce = async (req, res, next) => {
+exports.createSauce = async (req, res) => {
   try {
     const sauce = new Sauce({
       ...JSON.parse(req.body.sauce),
@@ -14,15 +14,14 @@ exports.createSauce = async (req, res, next) => {
   }
 };
 
-exports.modifySauce = async (req, res, next) => {
+exports.modifySauce = async (req, res) => {
   const sauceObject = req.file
     ? { ...JSON.parse(req.body.sauce), imageUrl: `${req.protocol}://${req.get("host")}/${req.file.path}` }
     : { ...req.body };
-
   try {
     const sauce = await Sauce.findOne({ _id: req.params.id });
     if (!sauce) return res.status(404).json({ error: "Objet non trouvé !" });
-    if (req.body.userId !== sauce.body.userId) throw "User ID non valable !";
+    if (req.userId !== sauce.userId) throw "User ID non valable !";
     await Sauce.findByIdAndUpdate(req.params.id, { ...sauceObject, _id: req.params.id });
     res.status(200).json({ message: "Objet modifié !" });
   } catch (error) {
@@ -30,11 +29,11 @@ exports.modifySauce = async (req, res, next) => {
   }
 };
 
-exports.deleteSauce = async (req, res, next) => {
+exports.deleteSauce = async (req, res) => {
   let sauce;
   try {
     sauce = await Sauce.findOne({ _id: req.params.id });
-    if (req.body.userId !== sauce.body.userId) throw "User ID non valable !";
+    if (req.userId !== sauce.userId) throw "User ID non valable !";
     if (!sauce) return res.status(404).json({ error: "Objet non trouvé !" });
   } catch (error) {
     return res.status(403).json({ error });
@@ -50,7 +49,7 @@ exports.deleteSauce = async (req, res, next) => {
   });
 };
 
-exports.getSauces = async (req, res, next) => {
+exports.getSauces = async (req, res) => {
   try {
     const sauces = await Sauce.find();
     res.status(200).json(sauces);
@@ -59,7 +58,7 @@ exports.getSauces = async (req, res, next) => {
   }
 };
 
-exports.getSauce = async (req, res, next) => {
+exports.getSauce = async (req, res) => {
   try {
     const sauce = await Sauce.findOne({ _id: req.params.id });
     if (!sauce) return res.status(404).json({ error: "Objet non trouvé !" });
@@ -69,7 +68,7 @@ exports.getSauce = async (req, res, next) => {
   }
 };
 
-exports.likeSauce = async (req, res, next) => {
+exports.likeSauce = async (req, res) => {
   const { like } = req.body;
   const { userId } = req;
 
@@ -102,7 +101,3 @@ exports.likeSauce = async (req, res, next) => {
     res.status(400).json({ error });
   }
 };
-
-// Like 1 = Aime / -1 = Aime pas / 0 = Annule
-// Check if sauce existe.
-// Check if body.userId is not like or disliked already. If not Push body.userId.

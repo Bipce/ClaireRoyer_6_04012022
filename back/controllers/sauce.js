@@ -23,6 +23,10 @@ exports.modifySauce = async (req, res) => {
     if (!sauce) return res.status(404).json({ error: "Objet non trouvé !" });
     if (req.userId !== sauce.userId) throw "User ID non valable !";
     await Sauce.findByIdAndUpdate(req.params.id, { ...sauceObject, _id: req.params.id });
+    if (req.file) {
+      const filename = sauce.imageUrl.split("/images/")[1];
+      fs.unlink(`images/${filename}`, () => {});
+    }
     res.status(200).json({ message: "Objet modifié !" });
   } catch (error) {
     res.status(403).json({ error });

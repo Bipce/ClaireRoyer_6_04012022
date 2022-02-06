@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 // Register new user
-exports.signup = async (req, res, next) => {
+exports.signup = async (req, res) => {
   let hash;
   try {
     hash = await bcrypt.hash(req.body.password, 10);
@@ -21,7 +21,7 @@ exports.signup = async (req, res, next) => {
 };
 
 // Connect existing user.
-exports.login = async (req, res, next) => {
+exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(401).json({ error: "Utilisateur non trouvé !" });
